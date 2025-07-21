@@ -48,8 +48,16 @@ struct CartView: View {
                 showAlert = true
                 paymentManager.onResult = nil
             }
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text(alertMessage))
+            .fullScreenCover(isPresented: $showAlert) {
+                VStack{
+                    Text(alertMessage)
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Go to Home Screen")
+                    }
+
+                }
             }
         }
         .navigationTitle("Cart")
