@@ -1,0 +1,20 @@
+PODS:
+  - Kingfisher (8.5.0)
+  - razorpay-pod (1.2.5)
+
+DEPENDENCIES:
+  - Kingfisher
+  - razorpay-pod (= 1.2.5)
+
+SPEC REPOS:
+  trunk:
+    - Kingfisher
+    - razorpay-pod
+
+SPEC CHECKSUMS:
+  Kingfisher: ff0d31a1f07bdff6a1ebb3ba08b8e6e567b6500c
+  razorpay-pod: aa2df076ea44baab6cc8296c1ccc715fe2ca818c
+
+PODFILE CHECKSUM: e5403492710af6c71e93d7970534064ead895605
+
+COCOAPODS: 1.16.2

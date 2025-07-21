@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct DashboardProductView: View {
     
@@ -15,23 +16,23 @@ struct DashboardProductView: View {
     var body: some View {
         
         VStack {
-            AsyncImage(url: URL(string: product.images.first ?? "")) { image in
-                image
-                    .resizable()
-                    .imageScale(.large)
-                
-            } placeholder: {
-                Image(systemName: "photo.artframe")
-                    .resizable()
-                    .frame(width: 100, height: 100)
-                    .foregroundColor(.gray.opacity(0.5))
-                    .padding()
-                    .overlay(alignment: .center) {
-                        ProgressView()
-                            .colorMultiply(.blue)
-                            .font(.largeTitle)
-                    }
-            }
+            
+            KFImage(URL(string: product.thumbnail))
+                .resizable()
+                .placeholder {
+                    Image(systemName: "photo.artframe")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.gray.opacity(0.5))
+                        .padding()
+                        .overlay(alignment: .center) {
+                            ProgressView()
+                                .colorMultiply(.blue)
+                                .font(.largeTitle)
+                        }
+                }
+                .scaledToFit()
+                .frame(width: 100, height: 100)
             
             VStack(alignment: .leading) {
                 Text(product.title)

@@ -6,12 +6,19 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct CartView: View {
     
     @ObservedObject var cart = Cart.shared
     @Environment(\.dismiss) var dismiss
     @State var isOrderPlaced = false
+    
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    
+    @ObservedObject var paymentManager = PaymentManager.shared
+    
     let bgCOlor = Color(red: 225 / 255, green: 224 / 255, blue: 238 / 255)
     
     var body: some View {
@@ -29,15 +36,20 @@ struct CartView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                    chechOutView
+                chechOutView
             }
-            .alert("Order Placed Successfully🤩", isPresented: $isOrderPlaced) {
-                Button("Done", role: .none) {
-                    cart.clearCart()
-                    dismiss()
+            .onChange(of: paymentManager.onResult) { newValue in
+                guard let result = newValue else { return }
+                if result {
+                    alertMessage = "Payment Successful!😍"
+                } else {
+                    alertMessage = "Payment Failed. Please try again.😥"
                 }
-            }message: {
-                Text("Your Order has placed successfully")
+                showAlert = true
+                paymentManager.onResult = nil
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text(alertMessage))
             }
         }
         .navigationTitle("Cart")
@@ -49,29 +61,28 @@ struct CartView: View {
             ForEach(cart.items) { item in
                 HStack {
                     
-                    AsyncImage(url: URL(string: item.images.first ?? "")) { image in
-                        image
-                            .resizable()
-                            .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(10)
-                        
-                    } placeholder: {
-                        Image(systemName: "photo.artframe")
-                            .resizable()
-                            .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
-                            .foregroundColor(.gray.opacity(0.2))
-                            .fontWeight(.thin)
-                            .scaledToFit()
-                            .background(bgCOlor)
-                            .overlay(alignment: .center) {
-                                ProgressView()
-                                    .colorMultiply(.blue)
-                                    .font(.largeTitle)
-                            }
-                            .cornerRadius(10)
-                            
-                    }
+                    KFImage(URL(string: item.thumbnail))
+                        .resizable()
+                        .placeholder {
+                            Image(systemName: "photo.artframe")
+                                .resizable()
+                                .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 100)
+                                .foregroundColor(.gray.opacity(0.2))
+                                .fontWeight(.thin)
+                                .scaledToFit()
+                                .background(bgCOlor)
+                                .overlay(alignment: .center) {
+                                    ProgressView()
+                                        .colorMultiply(.blue)
+                                        .font(.largeTitle)
+                                }
+                                .cornerRadius(10)
+                        }
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(10)
+                    
                     
                     VStack(alignment: .leading) {
                         Text(item.title)
@@ -160,7 +171,7 @@ struct CartView: View {
                     }
                     Button {
                         if cart.cartCount > 0 {
-                            isOrderPlaced.toggle()
+                            paymentManager.intiatePayment(amount: cart.totalPrice())
                         }else {
                             dismiss()
                         }
@@ -173,13 +184,14 @@ struct CartView: View {
                             .background(cart.cartCount > 0 ? Color.black : Color.red)
                             .foregroundStyle(Color.white)
                             .cornerRadius(10)
-                            
-                            
+                        
+                        
                     }
-
+                    
                 }
                 .padding()
             }
+        
     }
     
     func getAlertMessage(_ title: String) -> Alert {
@@ -188,7 +200,3 @@ struct CartView: View {
     }
 }
 
-
-//#Preview {
-//    CartView()
-//}

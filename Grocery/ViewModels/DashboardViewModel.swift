@@ -11,7 +11,7 @@ class DashboardViewModel: ObservableObject {
     
     @Published var groceries: ProductsDetails?
     @Published var categories: [String] = ["beauty", "fragrances", "furniture", "groceries"]
-    @Published var selectedCategory = "beauty"
+    @Published var selectedCategory: String?
     @Published var selectedCategoryItems: [Product] = []
     @Published var topProducts: [Product] = []
     
@@ -22,7 +22,7 @@ class DashboardViewModel: ObservableObject {
     
     func getData() {
         groceries = loadJSON("ProductsDetails.json")
-        selectedCategory = categories.first ?? ""
+        selectedCategory = selectedCategory ?? categories.first
         getSelectedCategoryData()
         
     }

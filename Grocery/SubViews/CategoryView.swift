@@ -44,9 +44,7 @@ struct CategoryView: View {
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .leading)
             .padding()
         }
-        .onAppear {
-            viewModel.selectedCategory = viewModel.categories.first ?? ""
-        }
+        
     }
 }
 
